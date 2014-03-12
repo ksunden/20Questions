@@ -12,13 +12,15 @@ public class Client
             //TODO: Change this to IP of server
             Socket sock = new Socket("127.0.0.1", 6013);
 
-            PrintWriter serverOut = new PrintWriter(
-                        sock.getOutputStream(), true);
+            PrintWriter serverOut = new PrintWriter( 
+                    sock.getOutputStream(), true);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     sock.getInputStream()));
 
-            Scanner scan = new Scanner(System.in);
+            Scanner serverIn = new Scanner(sock.getInputStream());
+
+            Scanner userIn = new Scanner(System.in);
 
             System.out.print("Status Check: ");
             boolean turn = (char)in.read() == 'q' ? true : false;
@@ -32,7 +34,7 @@ public class Client
                 if (turn)
                 {
                     System.out.println("Waiting for user input...");
-                    String message = scan.nextLine();
+                    String message = userIn.nextLine();
 
                     // Send the message
                     System.out.println("\n\tSending message " + message);
@@ -42,17 +44,8 @@ public class Client
                 {
                     // Read the response
                     System.out.println("Waiting for response...");
-                    String data = in.readLine();
-                    /*int data = in.read();
-                    while (in.ready())
-                    {
-                        char c = (char)data;
-                        System.out.print(c);
-                        if (c == '\n')
-                            break;
-                        data = in.read();
-                    }
-                    */
+                    String data = serverIn.nextLine();
+
                     System.out.println(data);
                     System.out.println("Response received!");
                 }
