@@ -10,32 +10,71 @@ public class Server
         {
             ServerSocket sock = new ServerSocket(6013);
 
-            Socket client = sock.accept();
-            System.out.println("client accepted");
+            Socket answerClient = null;
+            Socket questionClient = null;
+            InputStreamReader aIn = null;
+            InputStreamReader qIn = null;
+            PrintWriter aOut = null;
+            PrintWriter qOut = null;
 
-            InputStreamReader in = new InputStreamReader(
-                    client.getInputStream());
-
-            PrintWriter out = new PrintWriter(
-                    client.getOutputStream(), true);
-
-            while(true)
+            while(answerClient == null || questionClient == null)
             {
                 System.out.println("waiting...");
-                // Read in message from the client
-                int data = in.read();
-                while (in.ready())
+
+                Socket client = sock.accept();
+                System.out.println("client accepted");
+
+                if (answerClient == null)
+                {
+                    aIn = new InputStreamReader(client.getInputStream());
+                    aOut = new PrintWriter(client.getOutputStream(), true);
+                    answerClient = client;
+
+                    aOut.println("a");
+                }
+                else if (questionClient == null)
+                {
+                    qIn = new InputStreamReader(client.getInputStream());
+                    qOut = new PrintWriter(client.getOutputStream(), true);
+                    questionClient = client;
+
+                    qOut.println("q");
+                    qOut.flush();
+                }
+            }
+
+            System.out.println("Both clients connected, Let the games begin!");
+            while(true)
+            {
+                System.out.println("Waiting for question...");
+                int data = qIn.read();
+                while (qIn.ready())
                 {
                     char c = (char)data;
 
-                    // Echo back the message
-                    out.print(c);
+                    aOut.print(c);
                     System.out.print(c);
-                    data = in.read();
+                    data = qIn.read();
                 }
+                System.out.println();
                 
-                out.println();
-                out.flush();
+                aOut.println();
+                aOut.flush();
+
+                System.out.println("Waiting for answer...");
+                data = aIn.read();
+                while (aIn.ready())
+                {
+                    char c = (char)data;
+
+                    qOut.print(c);
+                    System.out.print(c);
+                    data = aIn.read();
+                }
+                System.out.println();
+                
+                qOut.println();
+                qOut.flush();
             }
         } 
         catch (Exception ex)

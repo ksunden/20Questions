@@ -15,41 +15,53 @@ public class Client
             PrintWriter serverOut = new PrintWriter(
                         sock.getOutputStream(), true);
 
-            InputStreamReader in = new InputStreamReader(
-                    sock.getInputStream());
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    sock.getInputStream()));
 
             Scanner scan = new Scanner(System.in);
 
+            System.out.print("Status Check: ");
+            boolean turn = (char)in.read() == 'q' ? true : false;
+            if (turn)
+                System.out.println("You will be questioning");
+            else
+                System.out.println("You will be answering");
+
             while (true)
             {
-                System.out.println("Waiting for user input...");
-                String message = scan.nextLine();
-
-                // Send the message
-                System.out.println("\nSending message " + message);
-                serverOut.println(message);
-
-                // Read the response
-                System.out.print("Response: ");
-                int data = in.read();
-                while (data != -1)
+                if (turn)
                 {
-                    char c = (char)data;
-                    System.out.print(c);
-                    if (c == '\n')
-                        break;
-                    data = in.read();
+                    System.out.println("Waiting for user input...");
+                    String message = scan.nextLine();
+
+                    // Send the message
+                    System.out.println("\n\tSending message " + message);
+                    serverOut.println(message);
                 }
+                else
+                {
+                    // Read the response
+                    System.out.println("Waiting for response...");
+                    String data = in.readLine();
+                    /*int data = in.read();
+                    while (in.ready())
+                    {
+                        char c = (char)data;
+                        System.out.print(c);
+                        if (c == '\n')
+                            break;
+                        data = in.read();
+                    }
+                    */
+                    System.out.println(data);
+                    System.out.println("Response received!");
+                }
+                turn = !turn;
             }
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
         }
-    }
-
-    public static enum ClientType
-    {
-        ANSWER, QUESTION
     }
 }
