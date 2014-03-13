@@ -27,9 +27,14 @@ public class Client
             if (turn)
                 System.out.println("You will be questioning");
             else
-                System.out.println("You will be answering");
-
-            while (true)
+			{
+				System.out.println("You will be answering");
+				System.out.println("Please enter the word in your head");
+				String answer = userIn.nextLine();
+				System.out.printf("Your word is: %s\n",answer);
+				serverOut.println(answer);
+			}
+            while (!sock.isClosed())
             {
                 if (turn)
                 {
@@ -45,6 +50,12 @@ public class Client
                     // Read the response
                     System.out.println("Waiting for response...");
                     String data = serverIn.nextLine();
+					String[] parts = data.split(";");
+					if (parts[0].equals("gameover"))
+					{
+						System.out.println("The answer was " + parts[1]);
+						break;
+					}
 
                     System.out.println(data);
                     System.out.println("Response received!");
