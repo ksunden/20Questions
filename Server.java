@@ -9,7 +9,7 @@ public class Server
 
 	public static void main(String[] args)
     {
-        final int MAX_QUESTIONS = 2;
+        final int MAX_QUESTIONS = 20;
 
         int counter = 0;
 		System.out.println("Server Initialized");
