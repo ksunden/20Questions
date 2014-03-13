@@ -4,6 +4,10 @@ import java.util.*;
 
 public class Client
 {
+    private static final String GAMEOVER = "gameover";
+    private static final String DELIM = ";";
+    private static final String DUMMY = "dummy";
+
     public static void main(String[] args)
     {
         System.out.println("Client Initialized");
@@ -52,16 +56,18 @@ public class Client
                     String data = serverIn.nextLine();
                     
                     // Check if the game is over
-					String[] parts = data.split(";");
-					if (parts.length > 1 && parts[0].equals("gameover"))
+					String[] parts = data.split(DELIM);
+					if (parts.length > 1 && parts[0].equals(GAMEOVER))
 					{
-                        System.out.println(parts[1]);
+                        if (!parts[1].equals(DUMMY))
+                        {
+                            System.out.println(parts[1]);
+                        }
 						System.out.println("The answer was " + parts[2]);
 						break;
 					}
 
                     System.out.println(data);
-                    //System.out.println("Response received!");
                 }
                 turn = !turn;
             }

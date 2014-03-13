@@ -3,9 +3,14 @@ import java.io.*;
 
 public class Server
 {
+    private static final String GAMEOVER = "gameover";
+    private static final String DELIM = ";";
+    private static final String DUMMY = "dummy";
+
 	public static void main(String[] args)
     {
         final int MAX_QUESTIONS = 2;
+
         int counter = 0;
 		System.out.println("Server Initialized");
 
@@ -79,7 +84,7 @@ public class Server
                 StringBuffer message = new StringBuffer();
                 if (counter == MAX_QUESTIONS - 1)
                 {
-                    message.append("gameover;");
+                    message.append(GAMEOVER + DELIM);
                 }
 
                 data = aIn.read();
@@ -94,7 +99,7 @@ public class Server
 
                 if (counter == MAX_QUESTIONS - 1)
                 {
-                    message.append(";" + answer.toString());
+                    message.append(DELIM + answer.toString());
                 }
 
                 
@@ -104,7 +109,7 @@ public class Server
 				counter++;
             }
 
-			aOut.println("gameover;" + answer.toString());
+			aOut.println(GAMEOVER + DELIM + DUMMY + DELIM + answer.toString());
 
 			answerClient.close();
 			questionClient.close();
