@@ -4,10 +4,11 @@ import java.io.*;
 public class Server
 {
 	public static void main(String[] args)
-
     {
+        final int MAX_QUESTIONS = 2;
         int counter = 0;
 		System.out.println("Server Initialized");
+
         try
         {
             ServerSocket sock = new ServerSocket(6013);
@@ -18,7 +19,7 @@ public class Server
             InputStreamReader qIn = null;
             PrintWriter aOut = null;
             PrintWriter qOut = null;
-			final int MAX_QUESTIONS = 2;
+
             while(answerClient == null || questionClient == null)
             {
                 System.out.println("waiting...");
@@ -47,7 +48,6 @@ public class Server
             }
 
             System.out.println("Both clients connected, Let the games begin!");
-			//aOut.printf("Key in the final word:");
 			StringBuffer answer = new StringBuffer();
 			int word = aIn.read();
 			while(word!=(int)'\n')
@@ -56,10 +56,8 @@ public class Server
 				answer.append(c);
 				word = aIn.read();
 			}
-			//aOut.println();
-			//aOut.flush();
             
-			while(counter<MAX_QUESTIONS)
+			while(counter < MAX_QUESTIONS)
             {
                 System.out.printf("Waiting for question...\n",counter);
                 int data = qIn.read();
@@ -76,31 +74,37 @@ public class Server
                 aOut.println();
                 aOut.flush();
 
-				// If it as the last question, tell the questioner that 
-				// the game is over
-				if (counter == (MAX_QUESTIONS-1))
-				{
-					qOut.println("gameover;"+answer.toString());
-				}
-                
-				System.out.println("Waiting for answer...");
+                System.out.println("Waiting for answer...");
+
+                StringBuffer message = new StringBuffer();
+                if (counter == MAX_QUESTIONS - 1)
+                {
+                    message.append("gameover;");
+                }
+
                 data = aIn.read();
                 while (aIn.ready())
                 {
                     char c = (char)data;
 
-                    qOut.print(c);
+                    message.append(c);
                     System.out.print(c);
                     data = aIn.read();
                 }
-                System.out.println();
+
+                if (counter == MAX_QUESTIONS - 1)
+                {
+                    message.append(";" + answer.toString());
+                }
+
                 
-                qOut.println();
+                qOut.println(message);
                 qOut.flush();
+
 				counter++;
             }
 
-			aOut.println("gameover;"+answer.toString());
+			aOut.println("gameover;" + answer.toString());
 
 			answerClient.close();
 			questionClient.close();

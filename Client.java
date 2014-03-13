@@ -42,7 +42,7 @@ public class Client
                     String message = userIn.nextLine();
 
                     // Send the message
-                    System.out.println("\n\tSending message " + message);
+                    //System.out.println("\n\tSending message " + message);
                     serverOut.println(message);
                 }
                 else
@@ -50,15 +50,18 @@ public class Client
                     // Read the response
                     System.out.println("Waiting for response...");
                     String data = serverIn.nextLine();
+                    
+                    // Check if the game is over
 					String[] parts = data.split(";");
-					if (parts[0].equals("gameover"))
+					if (parts.length > 1 && parts[0].equals("gameover"))
 					{
-						System.out.println("The answer was " + parts[1]);
+                        System.out.println(parts[1]);
+						System.out.println("The answer was " + parts[2]);
 						break;
 					}
 
                     System.out.println(data);
-                    System.out.println("Response received!");
+                    //System.out.println("Response received!");
                 }
                 turn = !turn;
             }
