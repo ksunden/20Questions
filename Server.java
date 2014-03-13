@@ -25,6 +25,8 @@ public class Server
             PrintWriter aOut = null;
             PrintWriter qOut = null;
 
+            StringBuffer answer = new StringBuffer();
+
             while(answerClient == null || questionClient == null)
             {
                 System.out.println("waiting...");
@@ -40,6 +42,14 @@ public class Server
 
                     aOut.println("a");
 					aOut.flush();
+
+                    int word = aIn.read();
+                    while(word!=(int)'\n')
+                    {
+                        char c = (char)word;
+                        answer.append(c);
+                        word = aIn.read();
+                    }
                 }
                 else if (questionClient == null)
                 {
@@ -53,14 +63,6 @@ public class Server
             }
 
             System.out.println("Both clients connected, Let the games begin!");
-			StringBuffer answer = new StringBuffer();
-			int word = aIn.read();
-			while(word!=(int)'\n')
-			{
-				char c = (char)word;
-				answer.append(c);
-				word = aIn.read();
-			}
             
 			while(counter < MAX_QUESTIONS)
             {
