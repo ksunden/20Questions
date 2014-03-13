@@ -14,7 +14,8 @@ public class Client
         try
         {
             //TODO: Change this to IP of server
-            Socket sock = new Socket("127.0.0.1", 6013);
+            String ip = args.length == 0 ? "127.0.0.1" : args[0];
+            Socket sock = new Socket(ip, 6013);
 
             PrintWriter serverOut = new PrintWriter( 
                     sock.getOutputStream(), true);
