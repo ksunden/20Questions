@@ -1,3 +1,7 @@
+// Authors: Lucas Kushner, Fayang Pan, Kyle Sunden
+// Client for a networked two player 20 Questions game
+// Last modified: 3/14/2014
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -13,26 +17,29 @@ public class Client
         System.out.println("Client Initialized");
         try
         {
-            //TODO: Change this to IP of server
+            // Connect to the server
             String ip = args.length == 0 ? "127.0.0.1" : args[0];
             Socket sock = new Socket(ip, 6013);
 
+            // Sending messages to the server
             PrintWriter serverOut = new PrintWriter( 
                     sock.getOutputStream(), true);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    sock.getInputStream()));
-
+            // Recieving data from the server
+            BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             Scanner serverIn = new Scanner(sock.getInputStream());
 
+            // Recieving data from the user
             Scanner userIn = new Scanner(System.in);
 
+            // Determine whether this client is asking or answering questions
             System.out.print("Status Check: ");
             boolean turn = (char)in.read() == 'q' ? true : false;
             if (turn)
                 System.out.println("You will be questioning");
             else
 			{
+                // Get the correc anwer from the answerer
 				System.out.println("You will be answering");
 				System.out.println("Please enter the word in your head");
 				String answer = userIn.nextLine();
@@ -43,6 +50,7 @@ public class Client
             {
                 if (turn)
                 {
+                    // Get string from user
                     System.out.println("Waiting for user input...");
                     String message = userIn.nextLine();
 
@@ -70,6 +78,7 @@ public class Client
 
                     System.out.println(data);
                 }
+                // Change turns
                 turn = !turn;
             }
         }

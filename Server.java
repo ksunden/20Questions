@@ -1,3 +1,7 @@
+// Authors: Lucas Kushner, Fayang Pan, Kyle Sunden
+// Server of a networked 20 Questions application
+// Last Modified: 3/14/14
+
 import java.net.*;
 import java.io.*;
 
@@ -16,6 +20,7 @@ public class Server
 
         try
         {
+            // Initialize the server and all client inputs and outputs
             ServerSocket sock = new ServerSocket(6013);
 
             Socket answerClient = null;
@@ -27,6 +32,7 @@ public class Server
 
             StringBuffer answer = new StringBuffer();
 
+            // Connect to two players, first the answerer, then the questioner
             while(answerClient == null || questionClient == null)
             {
                 System.out.println("waiting...");
@@ -40,9 +46,11 @@ public class Server
                     aOut = new PrintWriter(client.getOutputStream(), true);
                     answerClient = client;
 
+                    // Tell the client that it will be answering
                     aOut.println("a");
 					aOut.flush();
 
+                    // Read the answer from the client
                     int word = aIn.read();
                     while(word!=(int)'\n')
                     {
@@ -57,6 +65,7 @@ public class Server
                     qOut = new PrintWriter(client.getOutputStream(), true);
                     questionClient = client;
 
+                    // Tell the client that it will be asking
                     qOut.println("q");
                     qOut.flush();
                 }
@@ -64,8 +73,10 @@ public class Server
 
             System.out.println("Both clients connected, Let the games begin!");
             
+            // Run for 20 questions
 			while(counter < MAX_QUESTIONS)
             {
+                // Read a question
                 System.out.printf("Waiting for question...\n",counter);
                 int data = qIn.read();
                 while (qIn.ready())
@@ -78,17 +89,21 @@ public class Server
                 }
                 System.out.println();
                 
+                // Write to the anserer
                 aOut.println();
                 aOut.flush();
 
+                // Read an answer
                 System.out.println("Waiting for answer...");
 
+                // Add to message when the game will end
                 StringBuffer message = new StringBuffer();
                 if (counter == MAX_QUESTIONS - 1)
                 {
                     message.append(GAMEOVER + DELIM);
                 }
-
+                
+                // Read the answer from the answerer
                 data = aIn.read();
                 while (aIn.ready())
                 {
@@ -99,20 +114,23 @@ public class Server
                     data = aIn.read();
                 }
 
+                // Add the answer when the game has concluded
                 if (counter == MAX_QUESTIONS - 1)
                 {
                     message.append(DELIM + answer.toString());
                 }
 
-                
+                // Write to the questioner
                 qOut.println(message);
                 qOut.flush();
 
 				counter++;
             }
 
+            // Write the gameover message to the answerer
 			aOut.println(GAMEOVER + DELIM + DUMMY + DELIM + answer.toString());
 
+            // Close connections
 			answerClient.close();
 			questionClient.close();
 			sock.close();
